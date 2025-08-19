@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: pfQuest MacroTarget
+## Notes: Updates macros for quest objectives and items
+## Version: 0.2
+## SavedVariables: pfMacroConfig
+
+pfquest-macrotarget.lua
