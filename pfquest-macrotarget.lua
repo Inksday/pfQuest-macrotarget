@@ -76,23 +76,35 @@ local function ParseArrowText(text)
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
     text = text:gsub("^%s+", ""):gsub("%s+$", "")
 
-    -- Loot [Item] from [Mob]
-    local item, mob = text:match("[Ll]oot%s+%[(.-)%]%s+from%s+%[?(.-)%]?$")
+    local item, mob
+
+    -- Match "Loot And/Or Use [Item] from Mob"
+    item, mob = text:match("[Ll]oot.*[Uu]se%s+%[(.-)%]%s+from%s+(.+)$")
+    if not item then
+        -- Match "Loot [Item] from Mob"
+        item, mob = text:match("[Ll]oot%s+%[(.-)%]%s+from%s+(.+)$")
+    end
+    if not item then
+        -- Match "Use [Item] on Mob"
+        item, mob = text:match("[Uu]se%s+%[(.-)%]%s+on%s+(.+)$")
+    end
+
     if item and mob then
-        item = item:gsub("%[",""):gsub("%]",""):gsub("%.$",""):gsub("^%s+",""):gsub("%s+$","")
-        mob = mob:gsub("%[",""):gsub("%]",""):gsub("%.$",""):gsub("^%s+",""):gsub("%s+$","")
+        item = item:gsub("[%[%].]", ""):gsub("^%s+", ""):gsub("%s+$", "")
+        mob = mob:gsub("[%[%].]", ""):gsub("^%s+", ""):gsub("%s+$", "")
         return mob, item
     end
 
     -- Kill MobName
     local kill = text:match("^[Kk]ill%s+(.+)$")
     if kill then
-        kill = kill:gsub(":.*$",""):gsub("%.$",""):gsub("^%s+",""):gsub("%s+$","")
+        kill = kill:gsub(":.*$", ""):gsub("%.$", ""):gsub("^%s+", ""):gsub("%s+$", "")
         return kill, nil
     end
 
     return nil, nil
 end
+
 
 -- Hook function to read the current first objective from pfQuest
 local function OnArrowUpdate()
